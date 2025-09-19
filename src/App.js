@@ -1,25 +1,33 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect, useState } from "react";
+import LoginPage from "./pages/LoginPage";
+import HomePage from "./pages/HomePage";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+export default function App() {
+    const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const [role, setRole] = useState(null);
+
+    useEffect(() => {
+        const token = localStorage.getItem("token");
+        const userRole = localStorage.getItem("role");
+        if (token) {
+            setIsLoggedIn(true);
+            setRole(userRole);
+        }
+    }, []);
+
+    const handleLogout = () => {
+        localStorage.clear();
+        setIsLoggedIn(false);
+        setRole(null);
+    };
+
+    return (
+        <div>
+            {!isLoggedIn ? (
+                <LoginPage onLogin={() => setIsLoggedIn(true)} />
+            ) : (
+                <HomePage role={role} onLogout={handleLogout} />
+            )}
+        </div>
+    );
 }
-
-export default App;
