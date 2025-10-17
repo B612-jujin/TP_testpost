@@ -13,7 +13,7 @@ export default function LoginPage() {
     const [newPassword, setNewPassword] = useState("");
     const [codeSent, setCodeSent] = useState(false);
 
-    const API_BASE = "http://localhost:5000/api/auth"; // 백엔드 주소
+    const API_BASE = "http://192.168.24.185:5000/api/auth"; // 백엔드 주소
 
     // --- 로그인 ---
     const handleLogin = async (e) => {
@@ -120,62 +120,206 @@ export default function LoginPage() {
     };
 
     return (
-        <div style={{ maxWidth: "400px", margin: "50px auto", padding: "20px", border: "1px solid #ccc", borderRadius: "8px" }}>
-            {mode === "login" && (
-                <>
-                    <h2>로그인</h2>
-                    <form onSubmit={handleLogin}>
-                        <input type="email" placeholder="이메일" value={email} onChange={(e) => setEmail(e.target.value)} required />
-                        <input type="password" placeholder="비밀번호" value={password} onChange={(e) => setPassword(e.target.value)} required />
-                        <button type="submit">로그인</button>
-                    </form>
-                    <p style={{ color: "red" }}>{message}</p>
-                    <p>
-                        계정이 없나요? <button onClick={() => setMode("register")}>회원가입</button>
-                    </p>
-                    <p>
-                        비밀번호를 잊으셨나요? <button onClick={() => setMode("reset")}>재설정</button>
-                    </p>
-                </>
-            )}
+        <div className="container">
+            <div className="d-flex justify-center align-center" style={{ minHeight: "100vh" }}>
+                <div className="card" style={{ maxWidth: "450px", width: "100%" }}>
+                    <div className="text-center mb-4">
+                        <h1 className="page-title" style={{ fontSize: "32px", marginBottom: "8px" }}>
+                            🎓 과제 관리 시스템
+                        </h1>
+                        <p className="page-subtitle">로그인하여 시작하세요</p>
+                    </div>
 
-            {mode === "register" && (
-                <>
-                    <h2>회원가입 요청</h2>
-                    <form onSubmit={handleRegister}>
-                        <input type="text" placeholder="사용자 이름" value={username} onChange={(e) => setUsername(e.target.value)} required />
-                        <input type="email" placeholder="이메일" value={registerEmail} onChange={(e) => setRegisterEmail(e.target.value)} required />
-                        <input type="password" placeholder="비밀번호" value={registerPassword} onChange={(e) => setRegisterPassword(e.target.value)} required />
-                        <button type="submit">가입 요청</button>
-                    </form>
-                    <p style={{ color: "red" }}>{message}</p>
-                    <p>
-                        <button onClick={() => setMode("login")}>로그인으로 돌아가기</button>
-                    </p>
-                </>
-            )}
-
-            {mode === "reset" && (
-                <>
-                    <h2>비밀번호 재설정</h2>
-                    {!codeSent ? (
+                    {mode === "login" && (
                         <>
-                            <input type="email" placeholder="가입된 이메일" value={resetEmail} onChange={(e) => setResetEmail(e.target.value)} required />
-                            <button onClick={sendResetCode}>인증코드 발송</button>
-                        </>
-                    ) : (
-                        <>
-                            <input type="text" placeholder="메일로 받은 인증코드" value={resetCode} onChange={(e) => setResetCode(e.target.value)} required />
-                            <input type="password" placeholder="새 비밀번호" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} required />
-                            <button onClick={handleResetPassword}>비밀번호 재설정</button>
+                            <form onSubmit={handleLogin} className="d-flex flex-column gap-2">
+                                <div className="form-group">
+                                    <label className="form-label">이메일</label>
+                                    <input 
+                                        type="email" 
+                                        className="form-control"
+                                        placeholder="이메일을 입력하세요" 
+                                        value={email} 
+                                        onChange={(e) => setEmail(e.target.value)} 
+                                        required 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">비밀번호</label>
+                                    <input 
+                                        type="password" 
+                                        className="form-control"
+                                        placeholder="비밀번호를 입력하세요" 
+                                        value={password} 
+                                        onChange={(e) => setPassword(e.target.value)} 
+                                        required 
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-primary btn-lg">
+                                    로그인
+                                </button>
+                            </form>
+                            
+                            {message && (
+                                <div className={`alert ${message.includes('성공') ? 'alert-success' : 'alert-danger'}`}>
+                                    {message}
+                                </div>
+                            )}
+                            
+                            <div className="text-center mt-3">
+                                <p className="mb-2">
+                                    계정이 없나요? 
+                                    <button 
+                                        className="btn btn-secondary btn-sm ml-2" 
+                                        onClick={() => setMode("register")}
+                                    >
+                                        회원가입
+                                    </button>
+                                </p>
+                                <p>
+                                    비밀번호를 잊으셨나요? 
+                                    <button 
+                                        className="btn btn-secondary btn-sm ml-2" 
+                                        onClick={() => setMode("reset")}
+                                    >
+                                        재설정
+                                    </button>
+                                </p>
+                            </div>
                         </>
                     )}
-                    <p style={{ color: "red" }}>{message}</p>
-                    <p>
-                        <button onClick={() => setMode("login")}>로그인으로 돌아가기</button>
-                    </p>
-                </>
-            )}
+
+                    {mode === "register" && (
+                        <>
+                            <h2 className="text-center mb-4">회원가입 요청</h2>
+                            <form onSubmit={handleRegister} className="d-flex flex-column gap-2">
+                                <div className="form-group">
+                                    <label className="form-label">사용자 이름</label>
+                                    <input 
+                                        type="text" 
+                                        className="form-control"
+                                        placeholder="사용자 이름을 입력하세요" 
+                                        value={username} 
+                                        onChange={(e) => setUsername(e.target.value)} 
+                                        required 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">이메일</label>
+                                    <input 
+                                        type="email" 
+                                        className="form-control"
+                                        placeholder="이메일을 입력하세요" 
+                                        value={registerEmail} 
+                                        onChange={(e) => setRegisterEmail(e.target.value)} 
+                                        required 
+                                    />
+                                </div>
+                                <div className="form-group">
+                                    <label className="form-label">비밀번호</label>
+                                    <input 
+                                        type="password" 
+                                        className="form-control"
+                                        placeholder="비밀번호를 입력하세요" 
+                                        value={registerPassword} 
+                                        onChange={(e) => setRegisterPassword(e.target.value)} 
+                                        required 
+                                    />
+                                </div>
+                                <button type="submit" className="btn btn-success btn-lg">
+                                    가입 요청
+                                </button>
+                            </form>
+                            
+                            {message && (
+                                <div className={`alert ${message.includes('성공') ? 'alert-success' : 'alert-danger'}`}>
+                                    {message}
+                                </div>
+                            )}
+                            
+                            <div className="text-center mt-3">
+                                <button 
+                                    className="btn btn-secondary" 
+                                    onClick={() => setMode("login")}
+                                >
+                                    로그인으로 돌아가기
+                                </button>
+                            </div>
+                        </>
+                    )}
+
+                    {mode === "reset" && (
+                        <>
+                            <h2 className="text-center mb-4">비밀번호 재설정</h2>
+                            
+                            {!codeSent ? (
+                                <div className="d-flex flex-column gap-2">
+                                    <div className="form-group">
+                                        <label className="form-label">가입된 이메일</label>
+                                        <input 
+                                            type="email" 
+                                            className="form-control"
+                                            placeholder="가입된 이메일을 입력하세요" 
+                                            value={resetEmail} 
+                                            onChange={(e) => setResetEmail(e.target.value)} 
+                                            required 
+                                        />
+                                    </div>
+                                    <button 
+                                        className="btn btn-primary btn-lg" 
+                                        onClick={sendResetCode}
+                                    >
+                                        인증코드 발송
+                                    </button>
+                                </div>
+                            ) : (
+                                <form onSubmit={handleResetPassword} className="d-flex flex-column gap-2">
+                                    <div className="form-group">
+                                        <label className="form-label">인증코드</label>
+                                        <input 
+                                            type="text" 
+                                            className="form-control"
+                                            placeholder="메일로 받은 인증코드를 입력하세요" 
+                                            value={resetCode} 
+                                            onChange={(e) => setResetCode(e.target.value)} 
+                                            required 
+                                        />
+                                    </div>
+                                    <div className="form-group">
+                                        <label className="form-label">새 비밀번호</label>
+                                        <input 
+                                            type="password" 
+                                            className="form-control"
+                                            placeholder="새 비밀번호를 입력하세요" 
+                                            value={newPassword} 
+                                            onChange={(e) => setNewPassword(e.target.value)} 
+                                            required 
+                                        />
+                                    </div>
+                                    <button type="submit" className="btn btn-success btn-lg">
+                                        비밀번호 재설정
+                                    </button>
+                                </form>
+                            )}
+                            
+                            {message && (
+                                <div className={`alert ${message.includes('성공') || message.includes('발송') ? 'alert-success' : 'alert-danger'}`}>
+                                    {message}
+                                </div>
+                            )}
+                            
+                            <div className="text-center mt-3">
+                                <button 
+                                    className="btn btn-secondary" 
+                                    onClick={() => setMode("login")}
+                                >
+                                    로그인으로 돌아가기
+                                </button>
+                            </div>
+                        </>
+                    )}
+                </div>
+            </div>
         </div>
     );
 }

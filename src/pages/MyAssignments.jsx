@@ -6,13 +6,22 @@ export default function MyAssignments() {
 
     const token = localStorage.getItem("token");
 
+    // 내 제출 내역 + 평가 상태 가져오기
+    const fetchSubmissions = async () => {
+        try {
+            const res = await fetch("http://192.168.24.185:5000/api/submissions/me", {
+                headers: { Authorization: `Bearer ${token}` }
+            });
+            const data = await res.json();
+            setSubmissions(data);
+        } catch (err) {
+            console.error(err);
+            setMessage("제출 내역 조회 실패");
+        }
+    };
+
     useEffect(() => {
-        fetch("http://localhost:5000/api/submissions/me", {
-            headers: { Authorization: `Bearer ${token}` }
-        })
-            .then(res => res.json())
-            .then(data => setSubmissions(data))
-            .catch(err => console.error(err));
+        fetchSubmissions();
     }, []);
 
     const handleFileChange = async (submissionId, file) => {
@@ -20,7 +29,7 @@ export default function MyAssignments() {
         formData.append("file", file);
 
         try {
-            const res = await fetch(`http://localhost:5000/api/submissions/${submissionId}`, {
+            const res = await fetch(`http://192.168.24.185:5000/api/submissions/${submissionId}`, {
                 method: "PUT",
                 headers: { Authorization: `Bearer ${token}` },
                 body: formData
@@ -28,8 +37,12 @@ export default function MyAssignments() {
             const data = await res.json();
             if (res.ok) {
                 setMessage("파일 수정 완료");
-                // 새로고침
-                setSubmissions(submissions.map(s => s.submission_id === submissionId ? { ...s, file_url: data.file_url } : s));
+                // 제출 상태 + 점수/피드백 갱신
+                setSubmissions(submissions.map(s =>
+                    s.submission_id === submissionId
+                        ? { ...s, file_url: data.file_url, grade: data.grade, feedback: data.feedback }
+                        : s
+                ));
             } else {
                 setMessage(data.error || "수정 실패");
             }
@@ -51,7 +64,12 @@ export default function MyAssignments() {
                             type="file"
                             onChange={(e) => handleFileChange(s.submission_id, e.target.files[0])}
                         />
-                        <p>점수: {s.grade || "미채점"} | 피드백: {s.feedback || "-"}</p>
+                        <p>
+                            점수: {s.grade !== null ? s.grade : "미채점"} |
+                            피드백: {s.feedback || "-"}
+                        </p>
+                        {s.due_date && <p>마감일: {new Date(s.due_date).toLocaleString()}</p>}
+                        {s.description && <p>내용: {s.description}</p>}
                     </li>
                 ))}
             </ul>

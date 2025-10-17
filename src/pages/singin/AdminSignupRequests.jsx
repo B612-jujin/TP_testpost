@@ -12,7 +12,7 @@ export default function AdminSignupRequests() {
     const fetchRequests = async () => {
         setLoading(true);
         try {
-            const res = await fetch("http://localhost:5000/api/auth/admin/signup-requests", {
+            const res = await fetch("http://192.168.24.185:5000/api/auth/admin/signup-requests", {
                 headers: { Authorization: `Bearer ${token}` },
             });
 
@@ -29,7 +29,7 @@ export default function AdminSignupRequests() {
 
     const handleApprove = async (id) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/auth/admin/signup-requests/${id}/approve`, {
+            const res = await fetch(`http://192.168.24.185:5000/api/auth/admin/signup-requests/${id}/approve`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` },
             });
@@ -44,7 +44,7 @@ export default function AdminSignupRequests() {
 
     const handleReject = async (id) => {
         try {
-            const res = await fetch(`http://localhost:5000/api/auth/admin/signup-requests/${id}/reject`, {
+            const res = await fetch(`http://192.168.24.185:5000/api/auth/admin/signup-requests/${id}/reject`, {
                 method: "POST",
                 headers: { Authorization: `Bearer ${token}` },
             });
